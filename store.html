@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Store</title>
+  <meta id="meta" name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+
+  <!-- Lien pou estilize paj la ak Bootstrap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+  <style type="text/css">
+    /* Stil global pou paj la */
+    body {
+      background-color: #f0f0f0; /* Koulè background paj la */
+    }
+
+    /* Stil pou kat pwodwi yo */
+    .card {
+      height: 100%; /* Asire ke tout kat yo gen menm wotè a */
+      text-align: center; /* Centre tèks la nan kat yo */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Lonbraj pou kat yo */
+      border-radius: 8px; /* Ang yo awondi pou kat yo */
+      padding: 15px; /* Espas entènyal nan kat yo */
+      margin-bottom: 20px; /* Espas anba kat yo */
+    }
+
+    /* Stil pou imaj pwodwi yo */
+    .product-image {
+      width: 100%; /* Imaj la pran tout lèt kat la */
+      height: 300px; /* Wotè inifòm pou tout imaj yo */
+      object-fit: cover; /* Koupe imaj yo san yo pa deforme */
+      border-radius: 5px; /* Ang yo awondi pou imaj yo */
+      box-shadow: 0 2px 5px 1px rgba(0,0,0,.2); /* Lonbraj pou imaj yo */
+    }
+
+    /* Stil pou non pwodwi yo */
+    .product-name {
+      font-size: 1.25rem; /* Gwosè polis pou non pwodwi a */
+      font-weight: bold; /* Tekst an gras pou non pwodwi a */
+    }
+
+    /* Stil pou pri pwodwi yo */
+    .product-price {
+      font-size: 1.5rem; /* Gwosè polis pou pri pwodwi a */
+      color: #ff9900; /* Koulè pri pwodwi a */
+    }
+
+    /* Ajisteman pou kolòn yo selon gwosè ekran an */
+    @media (min-width: 768px) {
+      .product-card {
+        flex: 0 0 50%; /* Chak kat pran 50% nan lèt liy lan */
+        max-width: 50%; /* Lèt maksimòm chak kat */
+      }
+    }
+
+    @media (min-width: 992px) {
+      .product-card {
+        flex: 0 0 33.3333%; /* Chak kat pran 33.3333% nan lèt liy lan */
+        max-width: 33.3333%; /* Lèt maksimòm chak kat */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row d-flex justify-content-center">
+      <!-- Boukle atravè chak pwodwi epi montre detay yo -->
+      {% for product in products %}
+        <div class="col-lg-4 col-md-6 product-card">
+          <div class="card">
+            <h4 class="product-name">{{ product.name }}</h4>
+            <img class="product-image" src="{{ product.image_url }}" alt="{{ product.name }}">
+            <hr>
+            <p>{{ product.description }}</p>
+            <hr>
+            <h4 class="product-price">${{ product.price }}</h4>
+            <!-- Bouton pou achte kounye a -->
+            <a target="_blank" class="btn btn-sm btn-warning" href="{% url 'base:checkout' product.id %}">Buy Now</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</body>
+</html>

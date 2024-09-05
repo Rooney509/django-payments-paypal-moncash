@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Store</title>
+  <meta id="meta" name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+
+  <!-- Lien pou estilize paj la ak Bootstrap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+  <style type="text/css">
+    /* Stil global pou paj la */
+    body {
+      background-color: #f0f0f0; /* Koulè background paj la */
+    }
+    /* Seksyon MonCash */
+    #moncash-section {
+      text-align: center; /* Centre tèks ak logo MonCash */
+      margin-top: 20px; /* Espas anwo tèks la */
+    }
+    /* Stil pou bouton MonCash */
+    #moncash-button img {
+      max-width: 150px; /* Gwosè maksimòm pou logo MonCash */
+      cursor: pointer; /* Fè logo a klikabl */
+    }
+    /* Stil pou tèks MonCash */
+    #moncash-section p {
+      color: gray; /* Koulè tèks la */
+      font-style: italic; /* Fè tèks la italik */
+      margin-bottom: 10px; /* Espas anba tèks la */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-lg">
+        <br>
+        <!-- Afficher imaj pwodwi a -->
+        <img src="{{ product.image_url }}" alt="{{ product.name }}">
+      </div>
+      <div class="col-lg">
+        <br>
+        <div class="card card-body">
+          <h3>{{ product.name }}</h3>
+          <hr>
+          <h4>Total: ${{ product.price }}</h4>
+          <hr>
+
+          <!-- Kontenè bouton PayPal -->
+          <div id="paypal-button-container"></div>
+
+          <!-- Seksyon Peman MonCash -->
+          <div id="moncash-section">
+            <p>___or pay with MonCash___</p>
+            <div id="moncash-button">
+              <img src="{% static 'img/MC_button_en.png' %}" alt="Pay with MonCash" id="moncash-logo">
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script pou entegre PayPal -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AXQ8QLnPEshZrhcjsVXPQi9pN4Xzc8sf4B5btMHU8rT_1nSwnjP_E0HCYKnBGB6WG4qRk_7_pRPKkFJV&currency=USD"></script>
+
+  <script>
+    var total = '{{ product.price }}'; /* Total la pou peman an */
+
+    // Montre yon mesaj siksè si peman an reyisi
+    var paymentSuccess = {{ payment_success|default:'false'|lower }};
+    if (paymentSuccess) {
+        alert("Peman ou a te fèt avèk siksè !");
+    }
+
+    // Rende bouton PayPal la nan #paypal-button-container
+    paypal.Buttons({
+        locale: 'it_IT', /* Lang lokal pou bouton PayPal la */
+        style: {
+            color: 'blue',
+            shape: 'pill',
+            label: 'pay',
+            height: 40
+        },
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: total /* Montan total pou peman an */
+                    }
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(orderData) {
+                console.log('Rezilta kaptur', orderData, JSON.stringify(orderData, null, 2));
+                var transaction = orderData.purchase_units[0].payments.captures[0];
+                alert('Transaksyon '+ transaction.status + ': ' + transaction.id);
+            });
+        }
+    }).render('#paypal-button-container');
+
+    // Jere peman MonCash
+    document.getElementById('moncash-logo').addEventListener('click', function() {
+        // Redirije itilizatè a sou paj checkout MonCash nan Django
+        window.location.href = "{% url 'base:moncash' product.id %}";
+    });
+
+  </script>
+</body>
+</html>
